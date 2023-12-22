@@ -31,11 +31,11 @@ class ShopifyController extends AbstractController
         ];
 
         $shopName = 'probando2023';
-        $apiVersion = '2021-04';
+        $apiVersion = '2023-10';
         $resource = 'orders';
 
         // Realizar la solicitud GET a la API de Shopify
-        $response = $client->request('GET', 'https://' . $shopName . '.myshopify.com/admin/api/' . $apiVersion . '/' . $resource . '.json', [
+        $response = $client->request('GET', 'https://' . $shopName . '.myshopify.com/admin/api/' . $apiVersion . '/' . $resource . '.json?status=any', [
             'headers' => $headers
         ]);
 
@@ -53,12 +53,12 @@ class ShopifyController extends AbstractController
                     'ID' => $lineItem['id'],
                     'Gramos' => $lineItem['grams'],
                     'Nombre' => $lineItem['name'],
-                    'Precio' => $lineItem['price'],
+                    'Precio' => number_format($lineItem['price'], 2, ',', '.'),
                     'ID Producto' => $lineItem['product_id'],
                     'Cantidad' => $lineItem['quantity'],
                     'SKU' => $lineItem['sku'],
                     'Título' => $lineItem['title'],
-                    'Descuento Total' => $lineItem['total_discount'],
+                    'Descuento Total' => number_format($lineItem['total_discount'], 2, ',', '.'),
                 ];
                 array_push($lineItemsTraducidos, $lineItemTraducido);
             }
@@ -67,7 +67,7 @@ class ShopifyController extends AbstractController
             $totalShipping = null;
             if (isset($order['total_shipping_price_set']['shop_money'])) {
                 $totalShipping = [
-                    'Importe' => $order['total_shipping_price_set']['shop_money']['amount'],
+                    'Importe' => number_format($order['total_shipping_price_set']['shop_money']['amount'], 2, ',', '.'),
                     'Moneda' => $order['total_shipping_price_set']['shop_money']['currency_code'],
                 ];
             }
@@ -100,8 +100,8 @@ class ShopifyController extends AbstractController
                     'Exento_Impuestos' => $cliente['tax_exempt'],
                     'Teléfono' => $cliente['phone'],
                     'Moneda' => $cliente['currency'],
-                    'Exenciones_Impuestos' => $cliente['tax_exemptions'],
-                    'Dirección_Predeterminada' => $direccionPredeterminadaTraducida,
+                    'Exenciones Impuestos' => $cliente['tax_exemptions'],
+                    'Dirección Predeterminada' => $direccionPredeterminadaTraducida,
 
                 ];
             }
@@ -112,27 +112,25 @@ class ShopifyController extends AbstractController
                 'Confirmado' => $order['confirmed'],
                 'Fecha Pedido' => $order['created_at'],
                 'Moneda' => $order['currency'],
-                'Subtotal Actual' => $order['current_subtotal_price'],
-                'Descuentos Totales Actuales' => $order['current_total_discounts'],
-                'Precio Total Actual' => $order['current_total_price'],
-                'Impuesto Total Actual' => $order['current_total_tax'],
+                'Subtotal Actual' => number_format($order['current_subtotal_price'], 2, ',', '.'),
+                'Descuentos Totales Actuales' => number_format($order['current_total_discounts'], 2, ',', '.'),
+                'Precio Total Actual' => number_format($order['current_total_price'], 2, ',', '.'),
+                'Impuesto Total Actual' => number_format($order['current_total_tax'], 2, ',', '.'),
                 'Estado Financiero del Pedido' => $order['financial_status'],
-                'Pasarela Pago' => $order['gateway'],
                 'Número Pedido' => $order['order_number'],
                 'URL Estado Pedido' => $order['order_status_url'],
                 'Moneda Presentación' => $order['presentment_currency'],
-                'Método Procesamiento' => $order['processing_method'],
-                'Precio Subtotal' => $order['subtotal_price'],
+                'Precio Subtotal' => number_format($order['subtotal_price'], 2, ',', '.'),
                 'Etiquetas' => $order['tags'],
                 'Impuestos Incluidos' => $order['taxes_included'],
-                'Descuentos_Totales' => $order['total_discounts'],
-                'Precio Total Artículos' => $order['total_line_items_price'],
-                'Total Pendiente' => $order['total_outstanding'],
-                'Precio Total' => $order['total_price'],
+                'Descuentos_Totales' => number_format($order['total_discounts'], 2, ',', '.'),
+                'Precio Total Artículos' => number_format($order['total_line_items_price'], 2, ',', '.'),
+                'Total Pendiente' => number_format($order['total_outstanding'], 2, ',', '.'),
+                'Precio Total' => number_format($order['total_price'], 2, ',', '.'),
                 'Impuesto Total' => $order['total_tax'],
                 'Peso Total' => $order['total_weight'],
                 'Cliente' => $clienteTraducido,
-                'Artículos_Línea' => $lineItemsTraducidos,
+                'Artículos' => $lineItemsTraducidos,
                 'Precio Envío Total' => $totalShipping,
             ];
 
